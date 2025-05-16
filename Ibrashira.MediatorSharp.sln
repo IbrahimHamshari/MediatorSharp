@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36109.1
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ibrashira.MediatorSharp.Sample", "Ibrashira.MediatorSharp.Sample\Ibrashira.MediatorSharp.Sample.csproj", "{A88A8ECC-CE1D-4B9B-B7AE-2D5270053F0D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ibrashira.MediatorSharp", "Ibrashira.MediatorSharp.lib\Ibrashira.MediatorSharp.csproj", "{3576C56F-0D7E-4BFF-B88B-939B05C8E774}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A88A8ECC-CE1D-4B9B-B7AE-2D5270053F0D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A88A8ECC-CE1D-4B9B-B7AE-2D5270053F0D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A88A8ECC-CE1D-4B9B-B7AE-2D5270053F0D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A88A8ECC-CE1D-4B9B-B7AE-2D5270053F0D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3576C56F-0D7E-4BFF-B88B-939B05C8E774}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3576C56F-0D7E-4BFF-B88B-939B05C8E774}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3576C56F-0D7E-4BFF-B88B-939B05C8E774}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3576C56F-0D7E-4BFF-B88B-939B05C8E774}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {0F452E5D-2E46-44D7-9EED-446B27F93A07}
+	EndGlobalSection
+EndGlobal
