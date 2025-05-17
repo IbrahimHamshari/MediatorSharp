@@ -1,5 +1,4 @@
 ﻿using MediatorSharp.lib.Interfaces;
-using System.Runtime.CompilerServices;
 
 namespace MediatorSharp.lib.Models;
 
@@ -17,11 +16,7 @@ public class Result : IResult
     {
         Errors.Append(error);
     }
-
-    public Result()
-    {
-    }
-
+    private Result() {}
 }
 
 public class Result<T> : IResult<T> where T : class

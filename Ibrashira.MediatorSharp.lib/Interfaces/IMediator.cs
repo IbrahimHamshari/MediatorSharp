@@ -2,11 +2,11 @@
 
 namespace MediatorSharp.lib.Interfaces;
 
-public interface IMediator
+interface IMediator
 {
-    public Result Send(IRequest request);
+    Result Send(IRequest request);
 
-    public Result<T> Send<T>(IRequest<T> request) where T : class;
+    Result<T> Send<T>(IRequest<T> request) where T : class;
 
     Task<Result> SendAsync(IRequest request, CancellationToken cancellationToken = default);
 
