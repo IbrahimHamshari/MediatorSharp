@@ -17,7 +17,9 @@ public static class ServiceCollection
             .SelectMany(t => t.GetInterfaces()
                 .Where(i => i.IsGenericType &&
                     (i.GetGenericTypeDefinition() == typeof(IRequestHandler<>) ||
-                     i.GetGenericTypeDefinition() == typeof(IRequestHandler<,>)))
+                     i.GetGenericTypeDefinition() == typeof(IRequestHandler<,>) ||
+                     i.GetGenericTypeDefinition() == typeof(IAsyncRequestHandler<>) ||
+                     i.GetGenericTypeDefinition() == typeof(IAsyncRequestHandler<,>)))
                 .Select(i => new { HandlerType = t, ServiceType = i }))
             .ToList();
 
@@ -41,7 +43,9 @@ public static class ServiceCollection
             .SelectMany(t => t.GetInterfaces()
                 .Where(i => i.IsGenericType &&
                     (i.GetGenericTypeDefinition() == typeof(IRequestHandler<>) ||
-                     i.GetGenericTypeDefinition() == typeof(IRequestHandler<,>)))
+                     i.GetGenericTypeDefinition() == typeof(IRequestHandler<,>) ||
+                     i.GetGenericTypeDefinition() == typeof(IAsyncRequestHandler<>) ||
+                     i.GetGenericTypeDefinition() == typeof(IAsyncRequestHandler<,>)))
                 .Select(i => new { HandlerType = t, ServiceType = i }))
             .ToList();
 
@@ -51,7 +55,9 @@ public static class ServiceCollection
             .SelectMany(t => t.GetInterfaces()
                 .Where(i => i.IsGenericType &&
                     (i.GetGenericTypeDefinition() == typeof(IPipelineBehavior<>) ||
-                     i.GetGenericTypeDefinition() == typeof(IPipelineBehavior<,>)))
+                     i.GetGenericTypeDefinition() == typeof(IPipelineBehavior<,>) ||
+                     i.GetGenericTypeDefinition() == typeof(IAsyncPipelineBehavior<>) ||
+                     i.GetGenericTypeDefinition() == typeof(IAsyncPipelineBehavior<,>)))
                 .Select(i => new { HandlerType = t, ServiceType = i }))
             .ToList();
 

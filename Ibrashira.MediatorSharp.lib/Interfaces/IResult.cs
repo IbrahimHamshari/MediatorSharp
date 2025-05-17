@@ -2,7 +2,7 @@
 
 interface IResult
 {
-    bool IsSuccess {get;}
+    bool IsSuccess { get; }
     IReadOnlyCollection<IError> Errors { get; }
 
 }

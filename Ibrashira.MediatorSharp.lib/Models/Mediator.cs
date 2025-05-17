@@ -135,4 +135,69 @@ public class Mediator : IMediator
 
         return pipelines;
     }
+
+    public async Task<Result> SendAsync(IRequest request, CancellationToken cancellationToken = default)
+    {
+        var pipelines = GetAllRelevantPipelines(request).ToList();
+        var concreteType = request.GetType();
+        var handlerType = typeof(IAsyncRequestHandler<>).MakeGenericType(concreteType);
+        var handler = _serviceProvider.GetRequiredService(handlerType);
+        var handleMethod = handlerType.GetMethod("HandleAsync");
+
+        if (handleMethod == null)
+            throw new InvalidOperationException($"Handler for {concreteType} does not have a HandleAsync method.");
+
+        Func<IRequest, CancellationToken, Task<Result>> handlerDelegate = (req, ct) =>
+            (Task<Result>)handleMethod.Invoke(handler, new object[] { req, ct })!;
+
+        foreach (var pipeline in pipelines.AsEnumerable().Reverse())
+        {
+            var next = handlerDelegate;
+            var pipelineType = pipeline.GetType();
+            var pipelineHandleMethod = pipelineType.GetMethod("HandleAsync");
+            if (pipelineHandleMethod == null)
+                throw new InvalidOperationException($"Pipeline {pipelineType.Name} does not have a HandleAsync method.");
+
+            handlerDelegate = (req, ct) =>
+            {
+                var delegateType = typeof(Func<,,>).MakeGenericType(concreteType, typeof(CancellationToken), typeof(Task<Result>));
+                var pipelineDelegate = Delegate.CreateDelegate(delegateType, next.Target, next.Method);
+                return (Task<Result>)pipelineHandleMethod.Invoke(pipeline, new object[] { req, pipelineDelegate, ct })!;
+            };
+        }
+
+        return await handlerDelegate(request, cancellationToken);
+    }
+
+    public async Task<Result<T>> SendAsync<T>(IRequest<T> request, CancellationToken cancellationToken = default) where T : class
+    {
+        var pipelines = GetAllRelevantGenericPipelines(request).ToList();
+        var concreteType = request.GetType();
+        var handlerType = typeof(IAsyncRequestHandler<,>).MakeGenericType(concreteType, typeof(T));
+        var handler = _serviceProvider.GetRequiredService(handlerType);
+        var handleMethod = handlerType.GetMethod("HandleAsync");
+        if (handleMethod == null)
+            throw new InvalidOperationException($"Handler for {concreteType} and {typeof(T)} does not have a HandleAsync method.");
+
+        Func<IRequest<T>, CancellationToken, Task<Result<T>>> handlerDelegate = (req, ct) =>
+            (Task<Result<T>>)handleMethod.Invoke(handler, new object[] { req, ct })!;
+
+        foreach (var pipeline in pipelines.AsEnumerable().Reverse())
+        {
+            var next = handlerDelegate;
+            var pipelineType = pipeline.GetType();
+            var pipelineHandleMethod = pipelineType.GetMethod("HandleAsync");
+            if (pipelineHandleMethod == null)
+                throw new InvalidOperationException($"Pipeline {pipelineType.Name} does not have a HandleAsync method.");
+
+            handlerDelegate = (req, ct) =>
+            {
+                var delegateType = typeof(Func<,,>).MakeGenericType(concreteType, typeof(CancellationToken), typeof(Task<Result<T>>));
+                var pipelineDelegate = Delegate.CreateDelegate(delegateType, next.Target, next.Method);
+                return (Task<Result<T>>)pipelineHandleMethod.Invoke(pipeline, new object[] { req, pipelineDelegate, ct })!;
+            };
+        }
+
+        return await handlerDelegate(request, cancellationToken);
+    }
 }
