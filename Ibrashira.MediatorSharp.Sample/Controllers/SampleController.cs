@@ -30,5 +30,19 @@ namespace MediatorSharp.Controllers
             var req = new Test2Request(1);
             return _mediator.Send(req);
         }
+
+        [HttpGet("test3")]
+        public async Task<Result<Test>> GetTest3()
+        {
+            var req = new TestRequest(1);
+            return await _mediator.SendAsync(req);
+        }
+
+        [HttpGet("test4")]
+        public async Task<Result> GetTest4()
+        {
+            var req = new Test2Request(1);
+            return await _mediator.SendAsync(req);
+        }
     }
 }

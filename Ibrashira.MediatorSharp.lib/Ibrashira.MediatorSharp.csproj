@@ -11,7 +11,8 @@
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageTags>mediator, mediation, pipeline, dependency-injection, dotnet, .net, csharp, request-response, handler, aspnetcore, middleware, reflection, extensibility</PackageTags>
     <PackageReleaseNotes>Release the package</PackageReleaseNotes>
-    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
+    <NuGetAudit>True</NuGetAudit>
   </PropertyGroup>
 
   <ItemGroup>
