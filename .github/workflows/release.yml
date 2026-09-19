@@ -1,0 +1,65 @@
+name: Release
+
+on:
+  workflow_dispatch:
+
+env:
+  PACKAGE_VERSION: "1.0.0"
+  PACKAGE_PROJECT: MediatorSharp/MediatorSharp.csproj
+  PACKAGE_FEED: https://nuget.pkg.github.com/IbrahimHamshari/index.json
+
+jobs:
+  build-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+
+      - name: Restore
+        run: dotnet restore MediatorSharp.sln
+
+      - name: Build
+        run: dotnet build MediatorSharp.sln --no-restore --configuration Release
+
+      - name: Test
+        run: dotnet test MediatorSharp.sln --no-build --configuration Release
+
+  publish:
+    needs: build-test
+    runs-on: ubuntu-latest
+    environment: release
+    permissions:
+      contents: write
+      packages: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+
+      - name: Echo version
+        run: echo "Releasing v${{ env.PACKAGE_VERSION }}"
+
+      - name: Pack
+        run: dotnet pack "${{ env.PACKAGE_PROJECT }}" --configuration Release -p:Version=${{ env.PACKAGE_VERSION }} --output ./artifacts
+
+      - name: Tag and create GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "v${{ env.PACKAGE_VERSION }}" \
+            --title "v${{ env.PACKAGE_VERSION }}" \
+            --target "${{ github.sha }}" \
+            --generate-notes \
+            ./artifacts/*.nupkg
+
+      - name: Push to GitHub Packages
+        run: dotnet nuget push ./artifacts/*.nupkg --api-key "${{ secrets.GITHUB_TOKEN }}" --source "${{ env.PACKAGE_FEED }}" --skip-duplicate
