@@ -1,6 +1,6 @@
 # MediatorSharp
 
-MediatorSharp is a lightweight, extensible mediator library for .NET 8, designed to decouple request handling and enable pipeline behaviors in your applications. This solution includes a reusable library (`MediatorSharp`), a sample ASP.NET Core Web API project (`MediatorSharp.Sample`), and a test project (`MediatorSharp.Tests`).
+MediatorSharp is a lightweight, extensible mediator library for .NET 8, designed to decouple request handling and enable pipeline behaviors in your applications. This package (`MediatorSharp`) is the core library; the repository also ships a sample ASP.NET Core Web API project and an xUnit test suite.
 
 All public types live in the flat `MediatorSharp` namespace:
 
@@ -15,31 +15,13 @@ using MediatorSharp;
 - **Automatic Discovery**: Handlers and pipelines are automatically discovered and registered via reflection.
 - **Integration with Dependency Injection**: Built on top of Microsoft.Extensions.DependencyInjection.
 
-## Projects
-
-- **MediatorSharp**: Core mediator library (package id `MediatorSharp`).
-- **MediatorSharp.Sample**: ASP.NET Core Web API sample demonstrating mediator usage.
-- **MediatorSharp.Tests**: xUnit test suite covering the library.
-
 ## Getting Started
 
 ### Prerequisites
 
 - [.NET 8 SDK](https://dotnet.microsoft.com/download/dotnet/8.0)
-- Visual Studio 2022 or later
 
-### Build, Test, and Run the Sample
-
-```bash
-dotnet build MediatorSharp.sln
-dotnet test  MediatorSharp.sln
-```
-
-To run the sample, set `MediatorSharp.Sample` as the startup project and run it (`F5` or `Ctrl+F5`). The API will be available at `https://localhost:<port>/swagger` for interactive testing.
-
-### Usage Overview
-
-#### Registering Mediator and Pipelines
+### Registering Mediator and Pipelines
 
 In `Program.cs`:
 
@@ -52,7 +34,7 @@ builder.Services.AddMediatorAndDiscoverRequestsWithPipelines([Assembly.GetExecut
 
 This registers all request handlers and pipeline behaviors found in the current assembly. Use `AddMediatorAndDiscoverRequests` if you want handler discovery without registering pipelines.
 
-#### Defining Requests, Handlers, and Pipelines
+### Defining Requests, Handlers, and Pipelines
 
 - **Request**: Implement `IRequest` or `IRequest<TResponse>`.
 - **Handler**: Implement `IRequestHandler<TRequest>`, `IRequestHandler<TRequest, TResponse>`, `IAsyncRequestHandler<TRequest>`, or `IAsyncRequestHandler<TRequest, TResponse>`.
@@ -60,47 +42,31 @@ This registers all request handlers and pipeline behaviors found in the current 
 
 Pipeline behaviors wrap the handler. The first-registered behavior is outermost and runs first; registration order is the contract.
 
-#### Example Controller
+### Sending Requests
 
 ```csharp
 using MediatorSharp;
 
-[ApiController]
-[Route("[controller]")]
-public class SampleController : ControllerBase
-{
-    private readonly IMediator _mediator;
+Result<Test> result = mediator.Send(new TestRequest(1));
+Result simple = mediator.Send(new Test2Request(1));
 
-    public SampleController(IMediator mediator)
-    {
-        _mediator = mediator;
-    }
-
-    [HttpGet("test1")]
-    public Result<Test> Get()
-    {
-        var req = new TestRequest(1);
-        return _mediator.Send(req);
-    }
-
-    [HttpGet("test2")]
-    public Result GetTest2()
-    {
-        var req = new Test2Request(1);
-        return _mediator.Send(req);
-    }
-}
+Result<Test> asyncResult = await mediator.SendAsync(new TestRequest(1));
 ```
 
-## Extending
+A `Result` reports success or failure through `IsSuccess` and carries any `Errors`. A `Result<T>` additionally exposes `Value` on success.
 
-- Add new request/response types by implementing the appropriate interfaces.
-- Add pipeline behaviors for logging, validation, etc., by implementing `IPipelineBehavior<>` or `IPipelineBehavior<,>`.
+## Installing
+
+This package is published to GitHub Packages. Add the feed and authenticate before restoring:
+
+```bash
+dotnet nuget add source --username IbrahimHamshari --password YOUR_GITHUB_PAT --store-password-in-clear-text --name github "https://nuget.pkg.github.com/IbrahimHamshari/index.json"
+dotnet add package MediatorSharp
+```
 
 ## Dependencies
 
 - [Microsoft.Extensions.DependencyInjection.Abstractions](https://www.nuget.org/packages/Microsoft.Extensions.DependencyInjection.Abstractions)
-- [Swashbuckle.AspNetCore](https://www.nuget.org/packages/Swashbuckle.AspNetCore) (for Swagger in the sample project)
 
 ## License
 
